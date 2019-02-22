@@ -37,7 +37,8 @@ ssc2019 <- ssc2019 %>%
 #General well-being variables: Mood.Scale, Anxiety.1, Life.Satisfaction, Financial.Situation, Romantic.Life
 
 #Wrapping text (for the legends)
-ssc2019$legendText <- paste(str_wrap(ssc2019$Depression, 25), "\n");
+
+ssc2019$Depression <- paste(str_wrap(ssc2019$Depression, 25), "\n");
 
 #Creating summary variables for each mental disorder in the survey
 
@@ -100,7 +101,7 @@ d <- ggplot(ssc2019, aes(x = Depression, y = Mood.Scale, color = Depression)) +
   stat_compare_means(
     label = "p.signif", 
     method = "t.test", 
-    ref.group = ssc2019$legendText[3],
+    ref.group = ssc2019$Depression[3],
     label.y = 10.5
   ) +
   geom_jitter(alpha = 0.02) +
@@ -124,7 +125,7 @@ an <- ggplot(ssc2019, aes(x = Anxiety, y = Mood.Scale, color = Anxiety)) +
   stat_compare_means(
     label = "p.signif", 
     method = "t.test", 
-    ref.group = ssc2019$legendText[3],
+    ref.group = ssc2019$Depression[3],
     label.y = 10.5
   ) +
   geom_jitter(alpha = 0.02) +
@@ -148,7 +149,7 @@ au <- ggplot(ssc2019, aes(x = Autism, y = Mood.Scale, color = Autism)) +
   stat_compare_means(
     label = "p.signif", 
     method = "t.test", 
-    ref.group = ssc2019$legendText[3],
+    ref.group = ssc2019$Depression[3],
     label.y = 10.5
   ) +
   geom_jitter(alpha = 0.02) +
@@ -172,7 +173,7 @@ adhd <- ggplot(ssc2019, aes(x = ADHD, y = Mood.Scale, color = ADHD)) +
   stat_compare_means(
     label = "p.signif", 
     method = "t.test", 
-    ref.group = ssc2019$legendText[3],
+    ref.group = ssc2019$Depression[3],
     label.y = 10.5
   ) +
   geom_jitter(alpha = 0.02) +
