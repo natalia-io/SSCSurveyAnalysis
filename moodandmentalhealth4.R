@@ -209,7 +209,7 @@ mylegend<-g_legend(d);
 
 #Organizing the plots and the legend in a grid
 
-png(file="moodByMostCommonDisorders.png", width = 1750, height = 550, type = "quartz", res = 120);
+png(file="moodandmentalhealth4.png", width = 1750, height = 550, type = "quartz", res = 120);
 
 grid <- grid.arrange(
   arrangeGrob(
