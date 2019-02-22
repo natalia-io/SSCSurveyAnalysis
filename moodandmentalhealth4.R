@@ -1,5 +1,7 @@
 
 
+#This R script creates the moodandmentalhealth4.png chart
+
 #First of all, clearing the existing environment
 
 rm(list=ls());
@@ -212,8 +214,8 @@ grid <- grid.arrange(
   arrangeGrob(
     d + theme(legend.position="none", axis.title.y = element_blank()),
     an + theme(legend.position="none", axis.title.y = element_blank()),
-    au + theme(legend.position="none", axis.title.y = element_blank()),
     adhd + theme(legend.position="none", axis.title.y = element_blank()),
+    au + theme(legend.position="none", axis.title.y = element_blank()),
     mylegend,
     nrow = 1
   ),
@@ -247,3 +249,4 @@ grid <- grid.arrange(
 );
 
 dev.off()
+
