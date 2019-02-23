@@ -1,22 +1,17 @@
-
-
 #First of all, clearing the existing environment
 
 rm(list=ls());
 
-#Loading the required packages
+#Defining the requred packages
 
-library(openxlsx)
-library(ggplot2)
-library(stringr)
-library(gridExtra)
-library(knitr)
-library(dplyr)
-library(EnvStats)
-library(stats)
-library(ggpubr)
-library(grid)
-library(gtable)
+requiredPackages <- c("ggplot2","openxlsx","stringr","gridExtra","knitr","dplyr","EnvStats","stats","ggpubr","grid","gtable","reshape2");
+
+#Installing the unavailable ones
+unavailablePackages <- requiredPackages[!(requiredPackages %in% installed.packages()[,"Package"])];
+if(length(unavailablePackages)) install.packages(unavailablePackages);
+
+#Loading all of the requred packages into the environment
+lapply(requiredPackages, library, character.only = TRUE);
 
 #Downloading the Excel spreadhseet from the SSC website
 
