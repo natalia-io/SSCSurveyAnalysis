@@ -19,15 +19,15 @@ library(grid)
 library(gtable)
 
 #Downloading the Excel spreadhseet from the SSC website
-
 ssc2019 <- read.xlsx("https://slatestarcodex.com/Stuff/ssc2019_public.xlsx");
 
 #Making sure column names are unique
-
 colnames(ssc2019) <- make.unique(names(ssc2019));
 
-#Filtering null values
+#Replacing periods for whitespace
+#colnames(ssc2019) <- gsub(".", " ", colnames(ssc2019), fixed = TRUE)
 
+#Filtering null values. Listwise for now, because I am lazy. Will change for pairwise later.
 ssc2019 <- ssc2019 %>% 
   filter(Depression != "NA")  %>%
   filter(Anxiety != "NA")  %>%
@@ -44,11 +44,9 @@ ssc2019 <- ssc2019 %>%
 #General well-being variables: Mood.Scale, Anxiety.1, Life.Satisfaction, Financial.Situation, Romantic.Life
 
 #Wrapping text (for the legends)
-
 ssc2019$Depression <- paste(str_wrap(ssc2019$Depression, 25), "\n");
 
 #Creating summary variables for each mental disorder in the survey
-
 summaryDepression <- ssc2019 %>% 
   group_by(Depression)  %>% 
   summarise(
@@ -128,7 +126,6 @@ summaryBorderline <- ssc2019 %>%
 
 
 #Defining the plot theme
-
 plottheme <- theme(
   text = element_text(family = "Charter", color = "#333333", size = (5)),
   plot.background = element_rect(fill = "#ffffff"),
@@ -432,9 +429,14 @@ g_legend<-function(a.gplot){
 
 mylegend<-g_legend(d);
 
+sigTable <- matrix(c("ns:","p > 0.05","*:","p < 0.05","**:","p < 0.01","***:","p < 0.001","****:","p < 0.0001"),ncol=2,byrow=TRUE);
+colnames(sigTable) <- c("","");
+rownames(sigTable) <- c("","","","","");
+sigTable <- as.table(sigTable);
+
 #Organizing the plots and the legend in a grid
 
-png(file="moodandmentalhealthall.png", width = 2250, height = 1000, type = "quartz", res = 120);
+png(file="png-files/moodandmentalhealthall.png", width = 2600, height = 1000, type = "quartz", res = 150);
 
 grid <- grid.arrange(
   arrangeGrob(
@@ -456,7 +458,7 @@ grid <- grid.arrange(
     nrow = 1
   ),
   top = grid.text(
-    "\n Answers to “How would you rate your usual mood?” \n based on mental disorders \n",
+    substitute(paste("\n\n Answers to ",italic("“How would you rate your usual mood?”"), " based on mental disorders")),
     gp = gpar(
       fontsize = 22, 
       col = "#333333",
@@ -474,14 +476,14 @@ grid <- grid.arrange(
     rot = 90
   ),
   bottom = grid.text(
-    "\n Source: SlateStarCodex’s 2019 survey \n", 
+    "ns: p > 0.05, *: p < 0.05, **: p < 0.01, ***: p < 0.001, ****: p < 0.0001.\n All groups were compared with the diagnostic group (green).\n Source: SlateStarCodex’s 2019 survey \n", 
     gp = gpar(
-      fontsize = 16, 
+      fontsize = 9, 
       col = "#111111", 
       fontfamily = "Charter", 
       fontface = "italic"
     )
   )
-)
+);
 
 dev.off()
