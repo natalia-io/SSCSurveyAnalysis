@@ -1,7 +1,5 @@
 
 
-#This R script creates the moodandmentalhealth4.png chart
-
 #First of all, clearing the existing environment
 
 rm(list=ls());
@@ -41,6 +39,9 @@ ssc2019 <- ssc2019 %>%
 #Wrapping text (for the legends)
 
 ssc2019$Depression <- paste(str_wrap(ssc2019$Depression, 25), "\n");
+ssc2019$Anxiety <- paste(str_wrap(ssc2019$Anxiety, 25), "\n");
+ssc2019$Autism <- paste(str_wrap(ssc2019$Autism, 25), "\n");
+ssc2019$ADHD <- paste(str_wrap(ssc2019$ADHD, 25), "\n");
 
 #Creating summary variables for each mental disorder in the survey
 
@@ -122,6 +123,13 @@ d <- ggplot(ssc2019, aes(x = Depression, y = Mood.Scale, color = Depression)) +
     family="Charter",
     fontface="bold"
   );
+
+an <- d;
+an$mapping$x <- ssc2019$Anxiety;
+an$mapping$colour <- ssc2019$Anxiety;
+
+
+
 
 an <- ggplot(ssc2019, aes(x = Anxiety, y = Mood.Scale, color = Anxiety)) +
   stat_compare_means(
@@ -208,7 +216,7 @@ mylegend<-g_legend(d);
 
 #Organizing the plots and the legend in a grid
 
-png(file="moodandmentalhealth4.png", width = 1750, height = 550, type = "quartz", res = 120);
+png(file="png-files/moodandmentalhealth4.png", width = 1750, height = 550, type = "quartz", res = 120);
 
 grid <- grid.arrange(
   arrangeGrob(
@@ -238,9 +246,9 @@ grid <- grid.arrange(
     rot = 90
   ),
   bottom = grid.text(
-    "Source: SlateStarCodex’s 2019 survey \n", 
+    "ns: p > 0.05, *: p < 0.05, **: p < 0.01, ***: p < 0.001, ****: p < 0.0001.\n All groups were compared with the diagnostic group (green).\n Source: SlateStarCodex’s 2019 survey \n", 
     gp = gpar(
-      fontsize = 13, 
+      fontsize = 9, 
       col = "#111111", 
       fontfamily = "Charter", 
       fontface = "italic"
@@ -249,4 +257,3 @@ grid <- grid.arrange(
 );
 
 dev.off()
-
