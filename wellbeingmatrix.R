@@ -1,5 +1,5 @@
 #This R script creates a correlation matrix between the well-being/happiness related variables in the 2019 SlateStarCodex survey and saves it in a .png image. 
-#The diagonals in the matrix (where 
+
 
 
 #First of all, clearing the existing environment
