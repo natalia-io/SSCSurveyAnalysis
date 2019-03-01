@@ -1,18 +1,36 @@
 #First of all, clearing the existing environment
-
 rm(list=ls());
 
 #Unloading currently loaded packages
 lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.only=TRUE,unload=TRUE)
 
-
-#Defining the requred packages, installing the unavailable ones, and loading them into the environment
-
+#Defining the required packages, installing the unavailable ones, and loading them into the environment
 requiredPackages <- c("ggplot2","openxlsx","stringr","gridExtra","knitr","dplyr","ggpubr","grid","gtable","reshape2","PerformanceAnalytics");
 unavailablePackages <- requiredPackages[!(requiredPackages %in% installed.packages()[,"Package"])];
 if(length(unavailablePackages)) install.packages(unavailablePackages);
 lapply(requiredPackages, library, character.only = TRUE);
 
+#Downloading our data, the Excel spreadsheet with survey responses hosted in SSC's website
+ssc2019 <- read.xlsx("https://slatestarcodex.com/Stuff/ssc2019_public.xlsx");
+
+#Making sure column names are unique
+colnames(ssc2019) <- make.unique(names(ssc2019));
+
+#Filtering entries (listwise because I am lazy)
+ssc2019 <- ssc2019 %>% 
+  filter(Mood.Scale != "NA")  %>%
+  filter(Life.Satisfaction != "NA")  %>%
+  filter(Anxiety.1 != "NA")  %>%
+  filter(Ambition != "NA")  %>%
+  filter(Status != "NA")  %>%
+  filter(Financial.Situation != "NA")  %>%
+  filter(Social.Skills != "NA")  %>%
+  filter(Romantic.Life != "NA");
+  
+#Reverse-coding the anxiety variable, so that higher values indicate lower anxiety
+ssc2019$Anxiety.Reversed <- 11 - ssc2019$Anxiety.1
+  
+#Defining the plot theme
 plottheme <- theme(
   plot.background = element_rect(fill = "#ffffff"),
   plot.title = element_text(family = "Charter", color = "#333333", size = (40), face = "bold"),
@@ -35,27 +53,16 @@ plottheme <- theme(
   axis.title = element_text(family = "Charter", color = "#333333", size = (40), face = "bold"),
 );
 
-ssc2019 <- read.xlsx("https://slatestarcodex.com/Stuff/ssc2019_public.xlsx");
-colnames(ssc2019) <- make.unique(names(ssc2019));
-ssc2019 <- ssc2019 %>% 
-  filter(Mood.Scale != "NA")  %>%
-  filter(Life.Satisfaction != "NA")  %>%
-  filter(Anxiety.1 != "NA")  %>%
-  filter(Ambition != "NA")  %>%
-  filter(Status != "NA")  %>%
-  filter(Financial.Situation != "NA")  %>%
-  filter(Social.Skills != "NA")  %>%
-  filter(Romantic.Life != "NA");
-  
-#Reverse-coding the anxiety variables, so that higher values indicate lower anxiety
-ssc2019$Anxiety.Reversed <- 11 - ssc2019$Anxiety.1
-  
+#Getting the well-being related columns from the original spreadsheet
 subset <- select(ssc2019, Mood.Scale, Life.Satisfaction, Anxiety.Reversed, Ambition, Status, Social.Skills, Financial.Situation, Romantic.Life);
 
+#
 length <- length(subset);
 
+#Making an empty list which will be populated with the charts to be plotted in the following for-loop
 plots <- list();
 
+#Using a for-loop to make a correlation matrix
 for (i in 0:(length*length - 1))
  local({
  
@@ -87,13 +94,14 @@ for (i in 0:(length*length - 1))
     }
    }
    if (row==0) {
-    plots[[i+1]] <<- plots[[i+1]] + labs(title=names(subset[i%%length+1]));
+    plots[[i+1]] <<- plots[[i+1]] + labs(title = paste("\n",gsub("."," ", names(subset[i%%length+1]), fixed = TRUE),"\n"));
    }
    if(i %% length == 0) {
-    plots[[i+1]] <<- plots[[i+1]] + labs(y=paste("\n",names(subset[row + 1]),"\n"));
+    plots[[i+1]] <<- plots[[i+1]] + labs(y=paste("\n",gsub("."," ",names(subset[row + 1]), fixed = TRUE),"\n"));
    }
 })
 
+#Organizing the plots into a proper matrix and saving the resulting graphic to png-files/wellbeingmatrix.png
 png(file="png-files/wellbeingmatrix.png", width = 7000, height = 7000, type = "quartz", res = 150);
 
 grid <- grid.arrange(
