@@ -2,15 +2,16 @@
 
 rm(list=ls());
 
-#Defining the requred packages
+#And unloading the loaded packages
+
+lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.only=TRUE,unload=TRUE)
+
+
+#Defining the requred packages, installing the unavailable ones, and loading them into the environment
 
 requiredPackages <- c("ggplot2","openxlsx","stringr","gridExtra","knitr","dplyr","EnvStats","stats","ggpubr","grid","gtable","reshape2");
-
-#Installing the unavailable ones
 unavailablePackages <- requiredPackages[!(requiredPackages %in% installed.packages()[,"Package"])];
 if(length(unavailablePackages)) install.packages(unavailablePackages);
-
-#Loading all of the requred packages into the environment
 lapply(requiredPackages, library, character.only = TRUE);
 
 #Downloading the Excel spreadhseet from the SSC website
@@ -424,14 +425,14 @@ g_legend<-function(a.gplot){
 
 mylegend<-g_legend(d);
 
-sigTable <- matrix(c("ns:","p > 0.05","*:","p < 0.05","**:","p < 0.01","***:","p < 0.001","****:","p < 0.0001"),ncol=2,byrow=TRUE);
+sigTable <- matrix(c("\n ns:","p > 0.05","*:","p < 0.05","**:","p < 0.01","***:","p < 0.001","****:","p < 0.0001"),ncol=2,byrow=TRUE);
 colnames(sigTable) <- c("","");
 rownames(sigTable) <- c("","","","","");
 sigTable <- as.table(sigTable);
 
 #Organizing the plots and the legend in a grid
 
-png(file="png-files/moodandmentalhealthall.png", width = 2600, height = 1000, type = "quartz", res = 150);
+png(file="png-files/moodandmentalhealthall.png", width = 3000, height = 1000, type = "quartz", res = 150);
 
 grid <- grid.arrange(
   arrangeGrob(
@@ -455,7 +456,7 @@ grid <- grid.arrange(
   top = grid.text(
     substitute(paste("\n\n Answers to ",italic("“How would you rate your usual mood?”"), " based on mental disorders")),
     gp = gpar(
-      fontsize = 22, 
+      fontsize = 27, 
       col = "#333333",
       fontfamily="Charter"
     )
